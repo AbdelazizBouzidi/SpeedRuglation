@@ -20,6 +20,8 @@ int in3 = 11;
 int in4 = 8;
 int en1 = 9;
 int en2 = 10;
+int cmd = 0;
+
 NewPing sensorL(trigPinG, echoPinG, MAX_DISTANCE);  
 NewPing sensorR(trigPinD, echoPinD, MAX_DISTANCE);
 
@@ -33,14 +35,23 @@ void run(int s, int pin1 ,int pin2, int pin3)
        digitalWrite(pin2, LOW);
        analogWrite(pin3, s);
     }
-    else if (s < 0)
+}
+void stay_in_the_fucking_line(int max_speed){
+    error = (sensorL.ping_median(1)-sensorR.ping_median(1))/100;
+    cmd = kp * error ;
+    previous_error = error;
+    sum_error += error;
+    previous_time = current_time;
+    if (cmd > max_speed)
     {
-       digitalWrite(pin1, LOW);
-       digitalWrite(pin2, HIGH);
-       analogWrite(pin3, -s);
+      cmd = max_speed;
     }
-    
-  
+    else if (cmd < -max_speed)
+    {
+      cmd = -max_speed;
+    }
+    run(max_speed + cmd,in1,in2,en1);
+    run(max_speed - cmd,in3,in4,en2);
 }
 void setup() {
 
@@ -49,32 +60,7 @@ void setup() {
 }
 
 void loop() {
-  error = (sensorL.ping_median(1)-sensorR.ping_median(1))/100;
-   Serial.print(sensorL.ping_median(1)/100);
-   Serial.print("----");
-   Serial.print(sensorR.ping_median(1)/100);
-   Serial.print("----");
-  current_time = millis();
-  if ((current_time - previous_time) >= 10)
-  {
-    // int cmd = kp * error + kd * (error - previous_error) + ki * sum_error;
-    int cmd = kp * error ;
-    
-    previous_error = error;
-    sum_error += error;
-    previous_time = current_time;
-    if (cmd > 65)
-    {
-      cmd = 65;
-    }
-    else if (cmd < -65)
-    {
-      cmd = -65;
-    }
   
-    
-    Serial.println(cmd);
-    run(65 + cmd,in1,in2,en1);
-    run(65 - cmd,in3,in4,en2);
-  }
+  if ((current_time - previous_time) >= 10) stay_in_the_fucking_line(65);
+  
 }
