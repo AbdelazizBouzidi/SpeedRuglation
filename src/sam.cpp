@@ -46,7 +46,7 @@ void run(int s, int pin1 ,int pin2 )
     }
 }
 
-void stay_in_the_fucking_line(int max_speed){
+void stay_in_the_line(int max_speed){
     error = (read_sensor(trigPinG,echoPinG)-read_sensor(trigPinD,echoPinD));
     cmd = kp * error ;
     previous_error = error;
