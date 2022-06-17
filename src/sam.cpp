@@ -72,7 +72,7 @@ void setup() {
 }
 
 void loop() {
-     if ((current_time - previous_time) >= 10) stay_in_the_fucking_line(65);
+     if ((current_time - previous_time) >= 10) stay_in_the_line(65);
 
 }
   
